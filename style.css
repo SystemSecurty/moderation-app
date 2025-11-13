@@ -1,0 +1,394 @@
+/* Genel Ayarlar: Sıfırla her şeyi, özgür bırak! */
+body {
+    font-family: 'Arial', sans-serif; /* Daha sonra özel font ekleyebiliriz */
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a; /* Koyu, gizemli bir arka plan */
+    color: #e0e0e0; /* Açık renkli yazı */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Tam ekran olsun */
+}
+
+/* Başlık: EKİP */
+.app-header {
+    background-color: #330000; /* Kırmızımsı, tehlikeli bir ton */
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #ff4444;
+}
+.app-header h1 {
+    margin: 0;
+    font-size: 3.5em; /* Büyük ve iddialı */
+    color: #ff0000; /* Ateş kırmızısı */
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; /* Neon efekti */
+}
+.warn-flame {
+    color: #ffa500; /* Turuncu ateş */
+}
+
+/* Ana Navigasyon: Komuta Kutuları */
+.main-nav {
+    display: flex;
+    flex-wrap: wrap; /* Küçük ekranlarda alta geçsin */
+    justify-content: center;
+    gap: 15px; /* Kutucuklar arası boşluk */
+    padding: 20px;
+    background-color: #222; /* Biraz daha açık gri */
+    border-bottom: 1px solid #444;
+}
+
+.nav-item {
+    background-color: #444;
+    padding: 15px 20px; /* Eski padding */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    flex: 1; /* Esnek boyutlandırma */
+    min-width: 180px; /* En az bu kadar geniş olsun */
+    max-width: 250px; /* En fazla bu kadar geniş olsun */
+    border: 1px solid #666;
+    position: relative; /* Butonlar için */
+    display: flex; /* İçeriği hizalamak için */
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.nav-item:hover {
+    background-color: #555;
+}
+
+.nav-item h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #fff;
+}
+
+/* Seçenek Butonları (Ekle, Sil vb.) */
+.nav-item .options {
+    margin-top: 10px;
+    display: none; /* Varsayılan olarak gizli */
+    flex-wrap: wrap;
+    gap: 5px; /* Butonlar arası boşluk */
+    justify-content: center;
+}
+
+.nav-item .options.active {
+    display: flex; /* Aktif olduğunda göster */
+}
+
+.nav-item .options button {
+    background-color: #007bff; /* Mavi, aksiyon rengi */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9em;
+}
+.nav-item .options button:hover {
+    background-color: #0056b3;
+}
+
+/* Kırmızı butonlar için özelleştirme */
+.nav-item .options button[data-action="sil"], 
+.member-detail-view .warning-section .red-button,
+#selection-actions-area .red-button { /* Genel kırmızı buton sınıfı */
+    background-color: #dc3545; /* Kırmızı, tehlike */
+}
+.nav-item .options button[data-action="sil"]:hover,
+.member-detail-view .warning-section .red-button:hover,
+#selection-actions-area .red-button:hover {
+    background-color: #c82333;
+}
+
+/* Yeni Yeşil Butonlar (Ban Kaldır, Terfi Ettir) */
+.green-button {
+    background-color: #28a745 !important;
+}
+.green-button:hover {
+    background-color: #218838 !important;
+}
+
+/* Yeni Mavi Butonlar (Detay Göster) */
+.blue-button {
+    background-color: #17a2b8 !important;
+}
+.blue-button:hover {
+    background-color: #138496 !important;
+}
+
+/* Yeni Turuncu Butonlar (Uyarı Ver, Düzenle) */
+.orange-button {
+    background-color: #ffc107 !important;
+    color: #333 !important;
+}
+.orange-button:hover {
+    background-color: #e0a800 !important;
+}
+
+
+/* İçerik Alanı */
+.content-area {
+    padding: 20px;
+    flex-grow: 1; /* Kalan alanı kapla */
+    background-color: #2a2a2a; /* Ana içerik arka planı */
+    border-top: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Ortala */
+}
+
+#display-area, #form-area, .member-detail-view {
+    width: 100%;
+    max-width: 1200px; /* Geniş ekranlarda çok yayılmasın */
+    padding: 20px;
+    background-color: #333;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px; /* Form ile liste arası boşluk */
+}
+
+/* Seçim Aksiyon Paneli (Yeni!) */
+#selection-actions-area {
+    width: 100%;
+    max-width: 1200px;
+    padding: 15px 20px;
+    background-color: #3e3e3e; /* Biraz daha koyu */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    margin-top: -10px; /* display-area ile arayı kapat */
+    margin-bottom: 20px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    border-top: 2px solid #ff0000; /* Kırmızı çizgi dikkat çeksin */
+}
+#selection-actions-area p {
+    margin: 0 15px 0 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #ffcc00; /* Sarı renk vurgu */
+}
+#selection-actions-area button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.95em;
+    color: white;
+}
+
+
+/* Liste Görüntüleme */
+.member-list {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Bilgisayar görünümü için (6 sütun) */
+.member-list.pc-view {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Minimum 180px genişlik, 6 sütun */
+}
+
+/* Telefon görünümü için (2 sütun) */
+.member-list.mobile-view {
+    grid-template-columns: repeat(2, 1fr); /* 2 sütun */
+}
+
+.member-card {
+    background-color: #444;
+    border: 1px solid #666;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.member-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Seçili Kart Stili (Yeni!) */
+.member-card.selected {
+    border-color: #ff0000; /* Seçili olduğunda kırmızı çerçeve */
+    box-shadow: 0 0 15px #ff0000, 0 0 25px rgba(255, 0, 0, 0.5); /* Kırmızı neon efekti */
+    transform: scale(1.03); /* Biraz büyütsün */
+}
+
+.member-card h4 {
+    margin: 0 0 5px 0;
+    color: #ffdd00; /* Sarı, dikkat çekici */
+}
+.member-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #bbb;
+}
+.member-card .banned-info {
+    color: #dc3545; /* Ban bilgisi için kırmızı */
+    font-weight: bold;
+    margin-top: 5px;
+    font-size: 0.85em; /* Biraz küçük */
+}
+
+.member-detail-view {
+    background-color: #444;
+    border: 1px solid #666;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.member-detail-view h3 {
+    text-align: center;
+    color: #ff0000;
+    border-bottom: 1px dashed #666;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.member-detail-view p {
+    margin-bottom: 8px;
+}
+
+.warning-section {
+    display: flex;
+    flex-wrap: wrap; /* Butonlar küçük ekranda alta geçsin */
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.warning-section button {
+    background-color: #ffa500;
+    color: black;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.warning-section button:hover {
+    background-color: #cc8400;
+}
+
+/* Uyarı Geçmişi Listesi */
+.warning-history-list {
+    list-style: none; /* Madde işaretini kaldır */
+    padding: 0;
+    margin-top: 20px;
+    border-top: 1px dashed #666;
+    padding-top: 15px;
+}
+.warning-history-list li {
+    background-color: #555;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    border-left: 3px solid #ffcc00; /* Sarı bir çizgi vurgusu */
+}
+.warning-history-list li small {
+    display: block; /* Tarih alta geçsin */
+    color: #aaa;
+    margin-top: 5px;
+}
+
+/* Detaylı Tüm Uyarılar Listesi (renderWarnings için) */
+.detailed-warning-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+.detailed-warning-list li {
+    background-color: #3e3e3e;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border-left: 5px solid #ffa500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.detailed-warning-list li strong {
+    color: #fff;
+    font-size: 1.1em;
+}
+.detailed-warning-list li small {
+    display: block;
+    color: #bbb;
+    margin-top: 5px;
+    font-size: 0.8em;
+}
+
+
+/* Form Stilleri */
+.input-group {
+    margin-bottom: 15px;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #eee;
+}
+.input-group input[type="text"],
+.input-group input[type="number"] {
+    width: calc(100% - 20px); /* Padding'i düş */
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 5px;
+    background-color: #555;
+    color: #eee;
+    font-size: 1em;
+}
+
+button[type="submit"] {
+    background-color: #28a745; /* Yeşil, onay rengi */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Duyarlı Tasarım: Telefon Görünümü */
+@media (max-width: 768px) {
+    .app-header h1 {
+        font-size: 2.5em;
+    }
+    .main-nav {
+        flex-direction: column; /* Kutucuklar alt alta gelsin */
+        align-items: center;
+    }
+    .nav-item {
+        max-width: 90%; /* Telefon ekranının çoğunu kapla */
+        margin-bottom: 10px;
+    }
+    .member-list.pc-view { /* Telefonlarda PC görünümünü iptal et */
+        grid-template-columns: repeat(2, 1fr); /* 2 sütun */
+    }
+    #selection-actions-area p {
+        width: 100%; /* Seçilen metni ortala */
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .warning-section button {
+        flex: 1 1 auto; /* Butonlar yan yana sığmazsa alta geçsin */
+    }
+}
