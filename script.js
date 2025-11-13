@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Başlangıçta boş bir karşılama ekranı göster
     const displayArea = document.getElementById('display-area');
-    displayArea.innerHTML = `<h3>Seçim Yap, **syssec**! 👿</h3><p>Yukarıdaki kutucuklardan birini seçerek operasyona başla, **syssec**!</p>`;
+    displayArea.innerHTML = `<h3>Seçim Yap 👿</h3><p>Yukarıdaki kutucuklardan birini seçerek operasyona başla!</p>`;
 });
 
 // Ana işlemci: Hangi bölümde hangi eylem yapılacak
@@ -693,4 +693,5 @@ window.addEventListener('resize', () => {
             memberListDiv.classList.add('mobile-view');
         }
     }
+
 });
