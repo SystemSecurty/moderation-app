@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKİP Yönetim Paneli</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <header class="app-header">
+        <h1>EKİP <span class="warn-flame">🔥</span></h1>
+    </header>
+
+    <nav class="main-nav">
+        <div class="nav-item" data-section="uyeler">
+            <h2>Üyeler 👥</h2>
+            <div class="options">
+                <button data-action="ekle">Ekle ➕</button>
+                <button data-action="sil">Sil 🗑️</button>
+                <button data-action="duzenle">Düzenle ✍️</button>
+                <!-- "Taşı" butonu buradan kaldırıldı! -->
+                <button data-action="goster">Göster 👀</button>
+            </div>
+        </div>
+        <div class="nav-item" data-section="adminler">
+            <h2>Adminler 👑</h2>
+            <div class="options">
+                <button data-action="ekle">Ekle ➕</button>
+                <button data-action="sil">Sil 🗑️</button>
+                <button data-action="duzenle">Düzenle ✍️</button>
+                <!-- "Taşı" butonu buradan da kaldırıldı! -->
+                <button data-action="goster">Göster 👀</button>
+            </div>
+        </div>
+        <div class="nav-item" data-section="uyarilar">
+            <h2>Uyarılar ⚠️</h2>
+            <div class="options">
+                <button data-action="goster">Göster 👀</button>
+            </div>
+        </div>
+        <div class="nav-item" data-section="banlar">
+            <h2>Banlar 🚫</h2>
+            <div class="options">
+                <button data-action="goster">Göster 👀</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content-area">
+        <div id="display-area">
+            <!-- Üye/Admin listeleri veya boş karşılama mesajı burada gözükecek -->
+            <h3>Seçim Yap! 👿</h3>
+            <p>Yukarıdaki kutucuklardan birini seçerek operasyona başla, **syssec**!</p>
+        </div>
+        <!-- Seçili öğe için aksiyon butonları burada belirecek -->
+        <div id="selection-actions-area" class="selection-actions-panel">
+            <!-- JavaScript ile doldurulacak -->
+        </div>
+        <div id="form-area" style="display: none;">
+            <!-- Ekle/Düzenle formları burada gözükecek -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
