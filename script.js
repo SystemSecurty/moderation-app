@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Başlangıçta boş bir karşılama ekranı göster
     const displayArea = document.getElementById('display-area');
-    displayArea.innerHTML = `<h3>Seçim Yap, **syssec**! 👿</h3><p>Yukarıdaki kutucuklardan birini seçerek operasyona başla, **syssec**!</p>`;
+    displayArea.innerHTML = `<h3>Seçim Yap</h3><p>Yukarıdaki kutucuklardan birini seçerek başla</p>`;
 });
 
 // Ana işlemci: Hangi bölümde hangi eylem yapılacak
@@ -90,14 +90,14 @@ function handleAction(section, action) {
         showForm(section, 'ekle');
     } else if (action === 'duzenle') {
         // Düzenleme için listeyi göster, selection-actions-area üzerinden işlem yapacak
-        alert('Ula syssec, düzenlemek için listeden birini seçip sonra aşağıdan "Düzenle" butonuna basman lazım! ✍️');
+        alert('Düzenlemek için listeden birini seçip sonra aşağıdan "Düzenle" butonuna basman lazım! ✍️');
         // Listeyi tekrar göstermek yerine direkt formun gelmesi de sağlanabilir
         // showForm(selectedItem.type === 'member' ? 'uyeler' : 'adminler', 'duzenle', selectedItem); // Eğer önceden selectedItem varsa
         // Ama kullanıcı akışında önce listeyi görüp seçmesi daha mantıklı
         handleAction(section, 'goster'); 
     } else if (action === 'sil') {
         // Silme için listeyi göster, selection-actions-area üzerinden işlem yapacak
-        alert('Ula syssec, silmek için listeden birini seçip sonra aşağıdan "Sil" butonuna basman lazım! 🗑️');
+        alert('Silmek için listeden birini seçip sonra aşağıdan "Sil" butonuna basman lazım! 🗑️');
         handleAction(section, 'goster');
     } 
 }
@@ -128,7 +128,7 @@ function renderList(data, title, currentSection) {
     selectionActionsArea.innerHTML = ''; // Önceki aksiyonları temizle
 
     if (data.length === 0) {
-        displayArea.innerHTML += `<p>Ula **syssec**, burada henüz kimse yok! Kimseyi bulamıyorum bu listede! 👻</p>`;
+        displayArea.innerHTML += `<p>Burada henüz kimse yok! Kimseyi bulamıyorum bu listede! 👻</p>`;
         return;
     }
 
@@ -225,7 +225,7 @@ function selectItem(item, cardElement, currentSection) {
     }
     if (document.getElementById('btn-delete-item')) {
         document.getElementById('btn-delete-item').addEventListener('click', () => {
-            if (confirm(`Ula **syssec**, ${selectedItem.name} ${selectedItem.surname}'yi TAMAMEN SİLMEK istediğine emin misin? Bu geri dönüşü olmayan bir işlem! 🔥`)) {
+            if (confirm(`${selectedItem.name} ${selectedItem.surname}'yi TAMAMEN SİLMEK istediğine emin misin? Bu geri dönüşü olmayan bir işlem! 🔥`)) {
                 deleteItem(selectedItem.id, selectedItem.type);
                 handleAction(currentSection, 'goster'); // Listeyi yenile
             }
@@ -233,7 +233,7 @@ function selectItem(item, cardElement, currentSection) {
     }
     if (document.getElementById('btn-ban-item')) {
         document.getElementById('btn-ban-item').addEventListener('click', () => {
-            if (confirm(`Ula **syssec**, ${selectedItem.name} ${selectedItem.surname}'yi banlamak istediğine emin misin? Bir daha dönmesi zor olur ha! 👻`)) {
+            if (confirm(`${selectedItem.name} ${selectedItem.surname}'yi banlamak istediğine emin misin? Bir daha dönmesi zor olur ha! 👻`)) {
                 banItem(selectedItem.id, selectedItem.type);
                 handleAction(currentSection, 'goster'); // Listeyi yenile
             }
@@ -241,7 +241,7 @@ function selectItem(item, cardElement, currentSection) {
     }
     if (document.getElementById('btn-unban-item')) {
         document.getElementById('btn-unban-item').addEventListener('click', () => {
-            if (confirm(`Ula **syssec**, ${selectedItem.name} ${selectedItem.surname}'nin banını kaldırmak istediğine emin misin? Tekrar aramıza mı katılsın bu zıpçıktı? 🤪`)) {
+            if (confirm(`${selectedItem.name} ${selectedItem.surname}'nin banını kaldırmak istediğine emin misin? Tekrar aramıza mı katılsın bu zıpçıktı? 🤪`)) {
                 unbanItem(selectedItem.id);
                 handleAction(currentSection, 'goster'); // Listeyi yenile
             }
@@ -325,7 +325,7 @@ function showDetailView(item, currentSection) {
     // Banlama butonu (detay ekranından)
     if (document.getElementById(`ban-member-detail-${item.id}`)) {
         document.getElementById(`ban-member-detail-${item.id}`).addEventListener('click', () => {
-            if (confirm(`Ula **syssec**, ${item.name} ${item.surname}'yi banlamak istediğine emin misin? Bir daha dönmesi zor olur ha! 👻`)) {
+            if (confirm(`${item.name} ${item.surname}'yi banlamak istediğine emin misin? Bir daha dönmesi zor olur ha! 👻`)) {
                 banItem(item.id, item.type);
                 handleAction(currentSection, 'goster'); // Listeyi yenile
             }
@@ -335,7 +335,7 @@ function showDetailView(item, currentSection) {
     // Ban kaldırma butonu (Sadece banlar listesi için, detay ekranından)
     if (document.getElementById(`unban-member-detail-${item.id}`)) {
         document.getElementById(`unban-member-detail-${item.id}`).addEventListener('click', () => {
-            if (confirm(`Ula **syssec**, ${item.name} ${item.surname}'nin banını kaldırmak istediğine emin misin? Tekrar aramıza mı katılsın bu zıpçıktı? 🤪`)) {
+            if (confirm(`${item.name} ${item.surname}'nin banını kaldırmak istediğine emin misin? Tekrar aramıza mı katılsın bu zıpçıktı? 🤪`)) {
                 unbanItem(item.id);
                 handleAction(currentSection, 'goster'); // Listeyi yenile
             }
@@ -345,12 +345,12 @@ function showDetailView(item, currentSection) {
 
 // Uyarı Ekleme İşlemi (Hem seçimden hem detaydan çağrılabilir)
 function addWarningToItem(item, currentSection, fromDetailView = false) {
-    const warningReason = prompt(`Ula **syssec**, ${item.name}'e neden uyarı vereceksin? Bir sebep söyle ki kayıt altına alalım! 📜`);
+    const warningReason = prompt(`${item.name}'e neden uyarı vereceksin? Bir sebep söyle ki kayıt altına alalım! 📜`);
     if (warningReason) {
         if (!item.warnings) item.warnings = []; // Dizi yoksa oluştur
         item.warnings.push({ date: new Date().toLocaleString('tr-TR'), reason: warningReason });
         
-        alert(`Ula **syssec**, ${item.name}'e bir uyarı daha çaktık! Sebep: "${warningReason}" 🔥`);
+        alert(`${item.name}'e bir uyarı daha çaktık! Sebep: "${warningReason}" 🔥`);
         
         // Veriyi güncelle ve görünümü yenile
         updateDataStorage(item.type, item);
@@ -360,7 +360,7 @@ function addWarningToItem(item, currentSection, fromDetailView = false) {
             handleAction(currentSection, 'goster'); // Listeyi yeniden render et
         }
     } else {
-        alert('Ula **syssec**, sebep belirtmezsen uyarı ekleyemem ki! 🤔');
+        alert('Sebep belirtmezsen uyarı ekleyemem ki! 🤔');
     }
 }
 
@@ -368,7 +368,7 @@ function addWarningToItem(item, currentSection, fromDetailView = false) {
 function removeLastWarning(item, currentSection, fromDetailView = false) {
     if (item.warnings && item.warnings.length > 0) {
         const removedWarning = item.warnings.pop(); // En son uyarıyı kaldır
-        alert(`Ula **syssec**, ${item.name}'in en son uyarısı ("${removedWarning.reason}") kaldırıldı! Şimdi toplam uyarı sayısı: ${item.warnings.length} 😇`);
+        alert(`${item.name}'in en son uyarısı ("${removedWarning.reason}") kaldırıldı! Şimdi toplam uyarı sayısı: ${item.warnings.length} 😇`);
         
         // Veriyi güncelle ve görünümü yenile
         updateDataStorage(item.type, item);
@@ -378,24 +378,24 @@ function removeLastWarning(item, currentSection, fromDetailView = false) {
             handleAction(currentSection, 'goster'); // Listeyi yeniden render et
         }
     } else {
-        alert(`Ula **syssec**, ${item.name}'in zaten hiç uyarısı yok ki, daha ne kaldırasın? 🤔`);
+        alert(`${item.name}'in zaten hiç uyarısı yok ki, daha ne kaldırasın? 🤔`);
     }
 }
 
 // Üyeyi Adminliğe Terfi Ettirme (Yeni Fonksiyon!)
 function promoteToAdmin(memberItem, currentSection, fromDetailView = false) {
     if (memberItem.type !== 'member') {
-        alert('Ula **syssec**, bu zıpçıktı zaten Admin veya banlı! Nereye terfi ettireceksin? 🤔');
+        alert('Bu zıpçıktı zaten Admin veya banlı! Nereye terfi ettireceksin? 🤔');
         return;
     }
 
-    if (!confirm(`Ula **syssec**, ${memberItem.name} ${memberItem.surname}'yi Adminliğe terfi ettirmek istediğine emin misin? Artık yetkileri artacak, dikkatli ol! 👑`)) {
+    if (!confirm(`${memberItem.name} ${memberItem.surname}'yi Adminliğe terfi ettirmek istediğine emin misin? Artık yetkileri artacak, dikkatli ol! 👑`)) {
         return; // Onay verilmediyse dur
     }
 
-    const telno = prompt(`Ula **syssec**, ${memberItem.name} için bir telefon numarası girmelisin. Admin dediğin ulaşılabilir olmalı! 📞`);
+    const telno = prompt(`${memberItem.name} için bir telefon numarası girmelisin. Admin dediğin ulaşılabilir olmalı! 📞`);
     if (!telno) {
-        alert('Ula **syssec**, telefon numarası girmeden terfi ettiremem! Adminlik ciddi iştir! 😠');
+        alert('Telefon numarası girmeden terfi ettiremem! Adminlik ciddi iştir! 😠');
         return;
     }
 
@@ -416,7 +416,7 @@ function promoteToAdmin(memberItem, currentSection, fromDetailView = false) {
     saveToLocalStorage('members', members); // Üyeler listesini kaydet
     saveToLocalStorage('admins', admins); // Adminler listesini kaydet
 
-    alert(`Ula **syssec**, ${memberItem.name} ${memberItem.surname} başarıyla Adminliğe terfi ettirildi! Yeni yetkileri hayırlı olsun! 🥳`);
+    alert(`${memberItem.name} ${memberItem.surname} başarıyla Adminliğe terfi ettirildi! Yeni yetkileri hayırlı olsun! 🥳`);
     
     // Görünümü yenile
     if (fromDetailView) { // Detaydan geliyorsa adminin yeni detayını göster
@@ -512,12 +512,12 @@ function showForm(section, formType, itemToEdit = null) {
                 admins.push(newItem);
                 saveToLocalStorage('admins', admins);
             }
-            alert(`Ula **syssec**, yeni ${newItem.name} ${newItem.surname} sisteme dahil edildi! 🥳`);
+            alert(`Yeni ${newItem.name} ${newItem.surname} sisteme dahil edildi! 🥳`);
         } else { // Düzenleme
             // Mevcut öğenin ID'si ile güncelleme yap
             updateDataStorage(newItem.type, {...itemToEdit, ...newItem}); // Eski ID ile güncellenmiş veriyi kaydet
 
-            alert(`Ula **syssec**, ${newItem.name} ${newItem.surname}'nin bilgileri güncellendi! 🔄`);
+            alert(`${newItem.name} ${newItem.surname}'nin bilgileri güncellendi! 🔄`);
         }
 
         handleAction(section, 'goster'); // Listeyi yenile ve göster
@@ -530,9 +530,9 @@ function banItem(id, type) {
     const itemIndex = sourceArray.findIndex(item => item.id === id);
 
     if (itemIndex !== -1) {
-        const bannedReason = prompt(`Ula **syssec**, ${sourceArray[itemIndex].name}'yi neden banlıyorsun? Bir sebep söyle ki kayıt altına alalım! 📜`);
+        const bannedReason = prompt(`${sourceArray[itemIndex].name}'yi neden banlıyorsun? Bir sebep söyle ki kayıt altına alalım! 📜`);
         if (!bannedReason) {
-            alert('Ula **syssec**, ban nedeni belirtmezsen banlayamam ki! 🤔');
+            alert('Ban nedeni belirtmezsen banlayamam ki! 🤔');
             return;
         }
 
@@ -545,9 +545,9 @@ function banItem(id, type) {
         saveToLocalStorage(type === 'member' ? 'members' : 'admins', sourceArray);
         saveToLocalStorage('banned', banned);
         
-        alert(`Ula **syssec**, ${bannedItem.name} ${bannedItem.surname} başarıyla banlandı ve **Banlar** listesine gönderildi! Nedeni: "${bannedReason}"💥`);
+        alert(`${bannedItem.name} ${bannedItem.surname} başarıyla banlandı ve **Banlar** listesine gönderildi! Nedeni: "${bannedReason}"💥`);
     } else {
-        alert('Ula **syssec**, o kişiyi bulamadım ki! Belki zaten banlanmıştır. 🤔');
+        alert('O kişiyi bulamadım ki! Belki zaten banlanmıştır. 🤔');
     }
 }
 
@@ -569,9 +569,9 @@ function unbanItem(id) {
         }
         saveToLocalStorage('banned', banned);
 
-        alert(`Ula **syssec**, ${unbannedItem.name} ${unbannedItem.surname}'nin banı başarıyla kaldırıldı ve ${unbannedItem.type === 'member' ? 'Üyeler' : 'Adminler'} listesine geri döndü! ✅`);
+        alert(`${unbannedItem.name} ${unbannedItem.surname}'nin banı başarıyla kaldırıldı ve ${unbannedItem.type === 'member' ? 'Üyeler' : 'Adminler'} listesine geri döndü! ✅`);
     } else {
-        alert('Ula **syssec**, bu ID ile banlanmış birini bulamadım. Yanlış mı baktın? 🧐');
+        alert('Bu ID ile banlanmış birini bulamadım. Yanlış mı baktın? 🧐');
     }
 }
 
@@ -587,7 +587,7 @@ function deleteItem(id, type) {
         targetArray = admins;
         storageKey = 'admins';
     } else {
-        alert('Ula **syssec**, neyin nesini sileceğini bilemedim! Yanlış tip girdin sanırım. 🤨');
+        alert('Neyin nesini sileceğini bilemedim! Yanlış tip girdin sanırım. 🤨');
         return;
     }
 
@@ -596,9 +596,9 @@ function deleteItem(id, type) {
     if (itemIndex !== -1) {
         const [deletedItem] = targetArray.splice(itemIndex, 1);
         saveToLocalStorage(storageKey, targetArray);
-        alert(`Ula **syssec**, ${deletedItem.name} ${deletedItem.surname} sistemden tamamen silindi! 🔥 Bir daha izini bulamayız!`);
+        alert(`${deletedItem.name} ${deletedItem.surname} sistemden tamamen silindi! 🔥 Bir daha izini bulamayız!`);
     } else {
-        alert('Ula **syssec**, silinecek kişiyi listede bulamadım! Yoksa çoktan mı kaçtı? 🏃‍♂️');
+        alert('Silinecek kişiyi listede bulamadım! Yoksa çoktan mı kaçtı? 🏃‍♂️');
     }
 }
 
@@ -615,7 +615,7 @@ function renderWarnings() {
     ];
 
     if (allWarnedItems.length === 0) {
-        displayArea.innerHTML += `<p>Ula **syssec**, henüz kimseye uyarı verilmemiş. Çok mu uysal bir ekibin var? Yoksa sen mi uyarı vermekten çekiniyorsun?😜</p>`;
+        displayArea.innerHTML += `<p>Henüz kimseye uyarı verilmemiş. Çok mu uysal bir ekibin var? Yoksa sen mi uyarı vermekten çekiniyorsun?😜</p>`;
         return;
     }
 
