@@ -25,23 +25,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // Navigasyon butonlarını dinle (Üyeler, Adminler vb.)
     document.querySelectorAll('.nav-item').forEach(navItem => {
         navItem.addEventListener('click', (e) => {
-            // Sadece h2'ye tıklayınca veya boş alana tıklayınca seçenekleri aç/kapa
-            if (e.target.tagName === 'H2' || e.target.classList.contains('nav-item')) {
-                // Tüm seçenekleri kapat
-                document.querySelectorAll('.nav-item .options').forEach(opt => {
-                    if (opt !== navItem.querySelector('.options')) { // Mevcut tıklanan hariç
-                        opt.classList.remove('active');
-                    }
-                });
-                // Seçenekleri göster/gizle
-                navItem.querySelector('.options').classList.toggle('active');
-            }
+            // Find the actual nav-item element (in case a child was clicked)
+            const clickedNavItem = e.currentTarget; // The element the listener is attached to
+            const section = clickedNavItem.dataset.section;
+            const optionsDiv = clickedNavItem.querySelector('.options');
+
+            // Tüm seçenekleri kapat (kendi hariç)
+            document.querySelectorAll('.nav-item .options').forEach(opt => {
+                if (opt !== optionsDiv) {
+                    opt.classList.remove('active');
+                }
+            });
+
+            // Tıklanan öğenin seçeneklerini göster/gizle
+            optionsDiv.classList.toggle('active');
+
+            // **DİKKAT! ANA DEĞİŞİKLİK BURADA!**
+            // nav-item'a tıklandığında direkt olarak 'goster' aksiyonunu çağır!
+            handleAction(section, 'goster');
         });
 
-        // Seçenek butonlarını dinle (Ekle, Sil, Göster vb.)
+        // Seçenek butonlarını dinle (Ekle, Sil, Düzenle vb.)
         navItem.querySelectorAll('.options button').forEach(button => {
             button.addEventListener('click', (e) => {
-                e.stopPropagation(); // Üstteki nav-item'a tıklamayı engelle
+                e.stopPropagation(); // Önemli: navItem'ın tıklama olayının tekrar tetiklenmesini engeller
                 const section = navItem.dataset.section; // Hangi bölümden (üyeler, adminler) geldiğini al
                 const action = button.dataset.action; // Hangi eylemi yapacağını al (ekle, sil vb.)
                 
@@ -51,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Başlangıçta boş bir karşılama ekranı göster
     const displayArea = document.getElementById('display-area');
-    displayArea.innerHTML = `<h3>Seçim Yap 👿</h3><p>Yukarıdaki kutucuklardan birini seçerek operasyona başla!</p>`;
+    displayArea.innerHTML = `<h3>Seçim Yap, **syssec**! 👿</h3><p>Yukarıdaki kutucuklardan birini seçerek operasyona başla, **syssec**!</p>`;
 });
 
 // Ana işlemci: Hangi bölümde hangi eylem yapılacak
@@ -69,7 +76,7 @@ function handleAction(section, action) {
 
     console.log(`Operasyon: ${section} - ${action}`); // Hangi operasyonun çalıştığını izle
 
-    if (action === 'goster') {
+    if (action === 'goster') { // 'goster' aksiyonu artık ana nav-item tıklamasından gelecek
         if (section === 'uyeler') {
             renderList(members, 'Üyeler Listesi 👥', section);
         } else if (section === 'adminler') {
@@ -84,13 +91,15 @@ function handleAction(section, action) {
     } else if (action === 'duzenle') {
         // Düzenleme için listeyi göster, selection-actions-area üzerinden işlem yapacak
         alert('Ula syssec, düzenlemek için listeden birini seçip sonra aşağıdan "Düzenle" butonuna basman lazım! ✍️');
-        handleAction(section, 'goster');
+        // Listeyi tekrar göstermek yerine direkt formun gelmesi de sağlanabilir
+        // showForm(selectedItem.type === 'member' ? 'uyeler' : 'adminler', 'duzenle', selectedItem); // Eğer önceden selectedItem varsa
+        // Ama kullanıcı akışında önce listeyi görüp seçmesi daha mantıklı
+        handleAction(section, 'goster'); 
     } else if (action === 'sil') {
         // Silme için listeyi göster, selection-actions-area üzerinden işlem yapacak
         alert('Ula syssec, silmek için listeden birini seçip sonra aşağıdan "Sil" butonuna basman lazım! 🗑️');
         handleAction(section, 'goster');
     } 
-    // "tasi" aksiyonu, HTML menüsünden kaldırıldığı için buradan da silindi.
 }
 
 // Seçili öğeyi temizleme fonksiyonu
@@ -606,7 +615,7 @@ function renderWarnings() {
     ];
 
     if (allWarnedItems.length === 0) {
-        displayArea.innerHTML += `<p>Ula **syssec**, henüz kimseye uyarı verilmemiş. Çok mu uysal bir ekibin var? Yoksa sen mi uyarı vermekten çekiniyorsun? 😜</p>`;
+        displayArea.innerHTML += `<p>Ula **syssec**, henüz kimseye uyarı verilmemiş. Çok mu uysal bir ekibin var? Yoksa sen mi uyarı vermekten çekiniyorsun?😜</p>`;
         return;
     }
 
@@ -693,5 +702,4 @@ window.addEventListener('resize', () => {
             memberListDiv.classList.add('mobile-view');
         }
     }
-
 });
