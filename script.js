@@ -1,19 +1,73 @@
-// WarnGPT'nin gizli veri üssü: Başlangıç verileri (Güncellenmiş Yapı!)
-let members = [
+// --- VERİ SABİTLERİ (Python'daki dosya adları gibi) ---
+const MEMBERS_KEY = 'members';
+const ADMINS_KEY = 'admins';
+const BANNED_KEY = 'banned';
+// Not: 'warns' (uyarılar) için ayrı bir anahtar yok,
+// çünkü uyarılar her üye/admin objesinin içinde saklanıyor.
+// Bu, veri tutarlılığı için daha iyi bir yöntemdir.
+
+// --- GENEL VERİ İŞLEME FONKSİYONLARI (Python'daki gibi) ---
+
+/**
+ * Belirtilen anahtar (key) ile localStorage'dan veriyi yükler.
+ * Eğer veri yoksa, 'defaultValue' (varsayılan değer) döndürür ve kaydeder.
+ * @param {string} key - 'members', 'admins' veya 'banned' gibi anahtar.
+ * @param {Array} defaultValue - Veri bulunamazsa kullanılacak varsayılan dizi.
+ * @returns {Array} - Yüklenen veya varsayılan veri.
+ */
+function loadData(key, defaultValue = []) {
+    const storedData = localStorage.getItem(key);
+    if (storedData) {
+        try {
+            return JSON.parse(storedData);
+        } catch (error) {
+            console.error(`Hata: ${key} verisi bozuk, varsayılan değer kullanılıyor.`, error);
+            return defaultValue;
+        }
+    } else {
+        // Eğer veri depoda yoksa, varsayılan veriyi depoya kaydet ve döndür
+        saveData(key, defaultValue);
+        return defaultValue;
+    }
+}
+
+/**
+ * Verilen 'data'yı belirtilen 'key' (anahtar) ile localStorage'a kaydeder.
+ * @param {string} key - Verinin kaydedileceği anahtar ('members', 'admins' vb.).
+ * @param {any} data - Kaydedilecek veri (genellikle bir dizi veya obje).
+ */
+function saveData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+        console.error(`Hata: ${key} verisi localStorage'a kaydedilemedi.`, error);
+        alert('Hata: Veri kaydedilemedi. Depolama alanı dolu olabilir.');
+    }
+}
+
+// --- BAŞLANGIÇ VERİLERİ (Varsayılan) ---
+// Bu veriler, SADECE localStorage boşsa kullanılır.
+
+const defaultMembers = [
     { id: 'm1', type: 'member', name: 'Görkem', surname: 'Öztürk', age: 15, instagram: 'gorkeminsta', steam: 'gorkemsteam', discord: 'gorkem#1234', warnings: [{date: '2023-10-25 14:30:00', reason: 'Genel kural ihlali'}, {date: '2023-10-26 10:00:00', reason: 'Topluluk kurallarına aykırı davranış'}] },
     { id: 'm2', type: 'member', name: 'Ayşe', surname: 'Yılmaz', age: 17, instagram: 'aysey', steam: 'ayseyilmz', discord: 'aysey#5678', warnings: [] },
     { id: 'm3', type: 'member', name: 'Can', surname: 'Kara', age: 20, instagram: 'cankara', steam: 'cankara', discord: 'cankara#0007', warnings: [{date: '2023-09-15 09:00:00', reason: 'Tartışma çıkarma'}] }
 ];
 
-let admins = [
+const defaultAdmins = [
     { id: 'a1', type: 'admin', name: 'Mehmet', surname: 'Demir', age: 25, instagram: 'mehmetd', steam: 'mdemir', discord: 'mdemir#0001', telno: '555-123-4567', warnings: [{date: '2023-10-01 18:00:00', reason: 'Yetki ihlali'}] },
     { id: 'a2', type: 'admin', name: 'Zeynep', surname: 'Işık', age: 28, instagram: 'zeynep.isik', steam: 'zisik', discord: 'zisik#0002', telno: '555-987-6543', warnings: [] }
 ];
 
-let banned = [
-    // Banlananlar buraya gelecek...
+const defaultBanned = [
     { id: 'b1', type: 'member', name: 'Gizem', surname: 'Akın', age: 19, instagram: 'gizemakin', steam: 'gizemakin', discord: 'gizemakin#4321', warnings: [{date: '2023-10-20 12:00:00', reason: 'Sürekli rahatsızlık verme'}], bannedDate: '2023-10-26 10:00:00', bannedReason: 'Tekrarlayan ve ciddiye alınmayan kural ihlalleri.' }
 ];
+
+// --- UYGULAMA VERİLERİ (Global Değişkenler) ---
+// Programın ana veri kaynakları. loadData ile doldurulur.
+let members = [];
+let admins = [];
+let banned = [];
 
 // Global Seçili Öğe Durumu
 let selectedItem = null;
@@ -21,7 +75,12 @@ let selectedItemElement = null; // Seçili kartın HTML elementi
 
 // Sayfa yüklendiğinde çalışacak ilk operasyonlar
 document.addEventListener('DOMContentLoaded', () => {
-    loadFromLocalStorage(); // Verileri localStorage'dan yükle
+    // Verileri Python'daki gibi ayrı ayrı yükle
+    // (localStorage'dan yükler, yoksa varsayılanı kullanır)
+    members = loadData(MEMBERS_KEY, defaultMembers);
+    admins = loadData(ADMINS_KEY, defaultAdmins);
+    banned = loadData(BANNED_KEY, defaultBanned);
+
     // Navigasyon butonlarını dinle (Üyeler, Adminler vb.)
     document.querySelectorAll('.nav-item').forEach(navItem => {
         navItem.addEventListener('click', (e) => {
@@ -40,17 +99,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // Tıklanan öğenin seçeneklerini göster/gizle
             optionsDiv.classList.toggle('active');
 
-            // **DİKKAT! ANA DEĞİŞİKLİK BURADA!**
             // nav-item'a tıklandığında direkt olarak 'goster' aksiyonunu çağır!
             handleAction(section, 'goster');
         });
 
-        // Seçenek butonlarını dinle (Ekle, Sil, Düzenle vb.)
+        // Seçenek butonlarını dinle (Ekle aksiyonu)
         navItem.querySelectorAll('.options button').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.stopPropagation(); // Önemli: navItem'ın tıklama olayının tekrar tetiklenmesini engeller
                 const section = navItem.dataset.section; // Hangi bölümden (üyeler, adminler) geldiğini al
-                const action = button.dataset.action; // Hangi eylemi yapacağını al (ekle, sil vb.)
+                const action = button.dataset.action; // Hangi eylemi yapacağını al (sadece 'ekle' kalacak)
                 
                 handleAction(section, action);
             });
@@ -58,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Başlangıçta boş bir karşılama ekranı göster
     const displayArea = document.getElementById('display-area');
-    displayArea.innerHTML = `<h3>Seçim Yap</h3><p>Yukarıdaki kutucuklardan birini seçerek başla</p>`;
+    displayArea.innerHTML = `<h3>Seçim Yap!</h3><p>Yukarıdaki kutucuklardan birini seçerek başla</p>`;
 });
 
 // Ana işlemci: Hangi bölümde hangi eylem yapılacak
@@ -86,20 +144,11 @@ function handleAction(section, action) {
         } else if (section === 'banlar') {
             renderList(banned, 'Banlananlar Listesi 🚫', section);
         }
-    } else if (action === 'ekle') {
+    } else if (action === 'ekle') { // Sadece 'ekle' ana menü butonundan tetiklenecek
         showForm(section, 'ekle');
-    } else if (action === 'duzenle') {
-        // Düzenleme için listeyi göster, selection-actions-area üzerinden işlem yapacak
-        alert('Düzenlemek için listeden birini seçip sonra aşağıdan "Düzenle" butonuna basman lazım! ✍️');
-        // Listeyi tekrar göstermek yerine direkt formun gelmesi de sağlanabilir
-        // showForm(selectedItem.type === 'member' ? 'uyeler' : 'adminler', 'duzenle', selectedItem); // Eğer önceden selectedItem varsa
-        // Ama kullanıcı akışında önce listeyi görüp seçmesi daha mantıklı
-        handleAction(section, 'goster'); 
-    } else if (action === 'sil') {
-        // Silme için listeyi göster, selection-actions-area üzerinden işlem yapacak
-        alert('Silmek için listeden birini seçip sonra aşağıdan "Sil" butonuna basman lazım! 🗑️');
-        handleAction(section, 'goster');
     } 
+    // "duzenle" ve "sil" aksiyonları, HTML menüsünden kaldırıldığı için buradan da silindi.
+    // Artık bu eylemler sadece selection-actions-area üzerinden tetiklenecek.
 }
 
 // Seçili öğeyi temizleme fonksiyonu
@@ -199,30 +248,32 @@ function selectItem(item, cardElement, currentSection) {
     selectionActionsArea.innerHTML = `
         <p><strong>Seçilen:</strong> ${item.name} ${item.surname} ${item.type === 'member' ? ' (Üye)' : ' (Admin)'}</p>
         <button id="btn-show-detail" class="blue-button">Detay Göster 👀</button>
-        ${currentSection !== 'banlar' ? `<button id="btn-add-warning-selected" class="orange-button">Uyarı Ver ➕</button>` : ''} <!-- Yeni Uyarı Ver butonu -->
-        ${currentSection === 'uyeler' ? `<button id="btn-promote-member" class="green-button">Terfi Ettir 👑</button>` : ''} <!-- Yeni Terfi Ettir butonu -->
-        ${currentSection !== 'banlar' ? `<button id="btn-edit-item" class="orange-button">Düzenle ✍️</button>` : ''}
-        ${currentSection !== 'banlar' ? `<button id="btn-delete-item" class="red-button">Sil 🗑️</button>` : ''}
-        ${(currentSection === 'uyeler' || currentSection === 'adminler') ? `<button id="btn-ban-item" class="red-button">Banla 🚫</button>` : ''}
-        ${currentSection === 'banlar' ? `<button id="btn-unban-item" class="green-button">Banı Kaldır ✅</button>` : ''}
+        ${currentSection !== 'banlar' ? `<button id="btn-add-warning-selected" class="orange-button">Uyarı Ver ➕</button>` : ''} <!-- Uyarı Ver butonu -->
+        ${currentSection === 'uyeler' ? `<button id="btn-promote-member" class="green-button">Terfi Ettir 👑</button>` : ''} <!-- Terfi Ettir butonu -->
+        ${currentSection !== 'banlar' ? `<button id="btn-edit-item" class="orange-button">Düzenle ✍️</button>` : ''} <!-- Düzenle butonu -->
+        ${currentSection !== 'banlar' ? `<button id="btn-delete-item" class="red-button">Sil 🗑️</button>` : ''} <!-- Sil butonu -->
+        ${(currentSection === 'uyeler' || currentSection === 'adminler') ? `<button id="btn-ban-item" class="red-button">Banla 🚫</button>` : ''} <!-- Banla butonu -->
+        ${currentSection === 'banlar' ? `<button id="btn-unban-item" class="green-button">Banı Kaldır ✅</button>` : ''} <!-- Banı Kaldır butonu -->
     `;
 
     // Butonlara olay dinleyicileri ekle
     document.getElementById('btn-show-detail').addEventListener('click', () => showDetailView(selectedItem, currentSection));
     
-    // Yeni Uyarı Ver butonu olay dinleyicisi
+    // Uyarı Ver butonu olay dinleyicisi
     if (document.getElementById('btn-add-warning-selected')) {
         document.getElementById('btn-add-warning-selected').addEventListener('click', () => addWarningToItem(selectedItem, currentSection));
     }
 
-    // Yeni Terfi Ettir butonu olay dinleyicisi
+    // Terfi Ettir butonu olay dinleyicisi
     if (document.getElementById('btn-promote-member')) {
         document.getElementById('btn-promote-member').addEventListener('click', () => promoteToAdmin(selectedItem, currentSection));
     }
 
+    // Düzenle butonu olay dinleyicisi
     if (document.getElementById('btn-edit-item')) {
         document.getElementById('btn-edit-item').addEventListener('click', () => showForm(selectedItem.type === 'member' ? 'uyeler' : 'adminler', 'duzenle', selectedItem));
     }
+    // Sil butonu olay dinleyicisi
     if (document.getElementById('btn-delete-item')) {
         document.getElementById('btn-delete-item').addEventListener('click', () => {
             if (confirm(`${selectedItem.name} ${selectedItem.surname}'yi TAMAMEN SİLMEK istediğine emin misin? Bu geri dönüşü olmayan bir işlem! 🔥`)) {
@@ -231,6 +282,7 @@ function selectItem(item, cardElement, currentSection) {
             }
         });
     }
+    // Banla butonu olay dinleyicisi
     if (document.getElementById('btn-ban-item')) {
         document.getElementById('btn-ban-item').addEventListener('click', () => {
             if (confirm(`${selectedItem.name} ${selectedItem.surname}'yi banlamak istediğine emin misin? Bir daha dönmesi zor olur ha! 👻`)) {
@@ -239,6 +291,7 @@ function selectItem(item, cardElement, currentSection) {
             }
         });
     }
+    // Banı Kaldır butonu olay dinleyicisi
     if (document.getElementById('btn-unban-item')) {
         document.getElementById('btn-unban-item').addEventListener('click', () => {
             if (confirm(`${selectedItem.name} ${selectedItem.surname}'nin banını kaldırmak istediğine emin misin? Tekrar aramıza mı katılsın bu zıpçıktı? 🤪`)) {
@@ -353,7 +406,7 @@ function addWarningToItem(item, currentSection, fromDetailView = false) {
         alert(`${item.name}'e bir uyarı daha çaktık! Sebep: "${warningReason}" 🔥`);
         
         // Veriyi güncelle ve görünümü yenile
-        updateDataStorage(item.type, item);
+        updateDataStorage(item.type, item); // Sadece bu öğeyi içeren listeyi (members veya admins) kaydet
         if (fromDetailView) {
             showDetailView(item, currentSection); // Detay görünümünü yeniden render et
         } else {
@@ -371,7 +424,7 @@ function removeLastWarning(item, currentSection, fromDetailView = false) {
         alert(`${item.name}'in en son uyarısı ("${removedWarning.reason}") kaldırıldı! Şimdi toplam uyarı sayısı: ${item.warnings.length} 😇`);
         
         // Veriyi güncelle ve görünümü yenile
-        updateDataStorage(item.type, item);
+        updateDataStorage(item.type, item); // Sadece bu öğeyi içeren listeyi (members veya admins) kaydet
         if (fromDetailView) {
             showDetailView(item, currentSection); // Detay görünümünü yeniden render et
         } else {
@@ -413,8 +466,9 @@ function promoteToAdmin(memberItem, currentSection, fromDetailView = false) {
     };
     admins.push(newAdmin);
 
-    saveToLocalStorage('members', members); // Üyeler listesini kaydet
-    saveToLocalStorage('admins', admins); // Adminler listesini kaydet
+    // Python'daki gibi, SADECE ilgili dosyaları (anahtarları) kaydet
+    saveData(MEMBERS_KEY, members); // Üyeler listesini kaydet
+    saveData(ADMINS_KEY, admins); // Adminler listesini kaydet
 
     alert(`${memberItem.name} ${memberItem.surname} başarıyla Adminliğe terfi ettirildi! Yeni yetkileri hayırlı olsun! 🥳`);
     
@@ -507,10 +561,10 @@ function showForm(section, formType, itemToEdit = null) {
             newItem.id = generateId(section); // Yeni ID oluştur
             if (section === 'uyeler') {
                 members.push(newItem);
-                saveToLocalStorage('members', members);
+                saveData(MEMBERS_KEY, members); // Sadece üyeleri kaydet
             } else {
                 admins.push(newItem);
-                saveToLocalStorage('admins', admins);
+                saveData(ADMINS_KEY, admins); // Sadece adminleri kaydet
             }
             alert(`Yeni ${newItem.name} ${newItem.surname} sisteme dahil edildi! 🥳`);
         } else { // Düzenleme
@@ -541,9 +595,9 @@ function banItem(id, type) {
         bannedItem.bannedReason = bannedReason; // Banlanma nedeni ekle
         banned.push(bannedItem); // Banlananlar listesine ekle
 
-        // Verileri localStorage'da güncelle
-        saveToLocalStorage(type === 'member' ? 'members' : 'admins', sourceArray);
-        saveToLocalStorage('banned', banned);
+        // Verileri localStorage'da GÜNCELLE (Python'daki gibi ayrı ayrı)
+        saveData(type === 'member' ? MEMBERS_KEY : ADMINS_KEY, sourceArray);
+        saveData(BANNED_KEY, banned);
         
         alert(`${bannedItem.name} ${bannedItem.surname} başarıyla banlandı ve **Banlar** listesine gönderildi! Nedeni: "${bannedReason}"💥`);
     } else {
@@ -562,12 +616,12 @@ function unbanItem(id) {
 
         if (unbannedItem.type === 'member') {
             members.push(unbannedItem);
-            saveToLocalStorage('members', members);
+            saveData(MEMBERS_KEY, members); // Sadece üyeleri kaydet
         } else {
             admins.push(unbannedItem);
-            saveToLocalStorage('admins', admins);
+            saveData(ADMINS_KEY, admins); // Sadece adminleri kaydet
         }
-        saveToLocalStorage('banned', banned);
+        saveData(BANNED_KEY, banned); // Ban listesini de güncelle
 
         alert(`${unbannedItem.name} ${unbannedItem.surname}'nin banı başarıyla kaldırıldı ve ${unbannedItem.type === 'member' ? 'Üyeler' : 'Adminler'} listesine geri döndü! ✅`);
     } else {
@@ -582,10 +636,10 @@ function deleteItem(id, type) {
 
     if (type === 'member') {
         targetArray = members;
-        storageKey = 'members';
+        storageKey = MEMBERS_KEY;
     } else if (type === 'admin') {
         targetArray = admins;
-        storageKey = 'admins';
+        storageKey = ADMINS_KEY;
     } else {
         alert('Neyin nesini sileceğini bilemedim! Yanlış tip girdin sanırım. 🤨');
         return;
@@ -595,7 +649,7 @@ function deleteItem(id, type) {
 
     if (itemIndex !== -1) {
         const [deletedItem] = targetArray.splice(itemIndex, 1);
-        saveToLocalStorage(storageKey, targetArray);
+        saveData(storageKey, targetArray); // Sadece ilgili listeyi kaydet
         alert(`${deletedItem.name} ${deletedItem.surname} sistemden tamamen silindi! 🔥 Bir daha izini bulamayız!`);
     } else {
         alert('Silinecek kişiyi listede bulamadım! Yoksa çoktan mı kaçtı? 🏃‍♂️');
@@ -644,50 +698,39 @@ function generateId(section) {
     return prefix + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 }
 
-// Verileri localStorage'da saklama
-function saveToLocalStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-}
 
-// Verileri localStorage'dan yükleme
-function loadFromLocalStorage() {
-    const storedMembers = localStorage.getItem('members');
-    const storedAdmins = localStorage.getItem('admins');
-    const storedBanned = localStorage.getItem('banned');
+// Verileri localStorage'da saklama - ARTIK KULLANILMIYOR
+// (Artık genel saveData fonksiyonu kullanılıyor)
+// function saveToLocalStorage(key, data) {
+//     localStorage.setItem(key, JSON.stringify(data));
+// }
 
-    if (storedMembers) members = JSON.parse(storedMembers);
-    if (storedAdmins) admins = JSON.parse(storedAdmins);
-    if (storedBanned) banned = JSON.parse(storedBanned);
-    
-    // Eğer hiç veri yoksa, başlangıçtaki örnek verileri tekrar kaydet
-    // Bu kısım, ilk çalıştırmada veya localStorage temizlendiğinde örnek verileri yükler
-    // Not: Boş dizi ise yükle, null ise değil.
-    if (!storedMembers || (members.length === 0 && JSON.parse(storedMembers || '[]').length === 0)) { 
-        saveToLocalStorage('members', members);
-    }
-    if (!storedAdmins || (admins.length === 0 && JSON.parse(storedAdmins || '[]').length === 0)) {
-        saveToLocalStorage('admins', admins);
-    }
-    if (!storedBanned || (banned.length === 0 && JSON.parse(storedBanned || '[]').length === 0)) {
-        saveToLocalStorage('banned', banned);
-    }
-}
+// Verileri localStorage'dan yükleme - ARTIK KULLANILMIYOR
+// (Artık genel loadData fonksiyonu document.addEventListener içinde kullanılıyor)
+// function loadFromLocalStorage() { ... }
 
 
 // Veri güncelleyici (Uyarı, Düzenleme sonrası için)
 function updateDataStorage(type, updatedItem) {
+    // Bu fonksiyon, bir öğe güncellendiğinde tüm listeyi kaydeder.
     if (type === 'member') {
         const index = members.findIndex(m => m.id === updatedItem.id);
-        if (index !== -1) members[index] = updatedItem;
-        saveToLocalStorage('members', members);
+        if (index !== -1) {
+            members[index] = updatedItem;
+            saveData(MEMBERS_KEY, members); // Sadece member listesini kaydet
+        }
     } else if (type === 'admin') {
         const index = admins.findIndex(a => a.id === updatedItem.id);
-        if (index !== -1) admins[index] = updatedItem;
-        saveToLocalStorage('admins', admins);
-    } else if (type === 'banned') { // Banlanan bir öğenin özelliklerini güncellediğinde (örn: unban'da)
+        if (index !== -1) {
+            admins[index] = updatedItem;
+            saveData(ADMINS_KEY, admins); // Sadece admin listesini kaydet
+        }
+    } else if (type === 'banned') { // Banlanan bir öğenin özelliklerini güncellediğinde
         const index = banned.findIndex(b => b.id === updatedItem.id);
-        if (index !== -1) banned[index] = updatedItem;
-        saveToLocalStorage('banned', banned);
+        if (index !== -1) {
+            banned[index] = updatedItem;
+            saveData(BANNED_KEY, banned); // Sadece ban listesini kaydet
+        }
     }
 }
 
